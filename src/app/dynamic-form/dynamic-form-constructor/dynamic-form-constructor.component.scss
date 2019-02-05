@@ -1,0 +1,108 @@
+label {
+  line-height: 0;
+}
+
+.form-group {
+  margin-bottom: .5em;
+}
+
+.scheduler-legend-valid {
+  width: auto;
+  color: red;
+  text-align: right;
+  margin-bottom: 0;
+}
+
+.scheduler-fieldset-valid {
+  padding: 10px;
+  border-radius: 5px;
+  border: 1px dashed red;
+}
+
+.scheduler-legend {
+  width: auto;
+  text-align: right;
+  margin-bottom: 0;
+}
+
+.scheduler-fieldset {
+  padding: 10px;
+  border-radius: 5px;
+  margin-bottom: .5em;
+  border: 1px solid #cdcdcd;
+}
+
+.required:after,
+.form-control.ng-invalid~label.checkbox-inline::after {
+  content: " *";
+  color: red;
+}
+
+.formname {
+  border: 1px solid #cdcdcd;
+  border-right: none;
+  border-top-left-radius: 5px;
+  border-bottom-left-radius: 5px;
+  padding: 10px;
+  cursor: pointer;
+  background-color: #fff;
+  margin-bottom: 2px;
+  width: 100%;
+
+  &:hover {
+    background: linear-gradient(180deg, #ffffff, #ededed);
+  }
+}
+
+.selected {
+  font-weight: 500;
+  position: relative;
+  background: #fff !important;
+
+  &::before {
+    content: " ";
+    position: absolute;
+    top: 0;
+    right: -1px;
+    z-index: 111;
+    background-color: #fff;
+    width: 1px;
+    height: 100%;
+  }
+}
+
+.form-content {
+  background-color: #fff;
+  border: 1px solid #cdcdcd;
+  border-radius: 5px;
+  padding: 10px;
+}
+
+.new-form {
+  border-color: #90b901 !important;
+}
+
+.field-group {
+  border: 1px solid #cdcdcd;
+  border-radius: 5px;
+  padding: 5px;
+  margin-bottom: .5em;
+}
+
+.field-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 5px;
+  font-size: 16px;
+}
+.flex-center-bottom {
+  display: flex;
+  justify-content: center;
+  align-items: flex-end;
+}
+.error {
+  color: red;
+  margin-left: 10px;
+  text-transform: lowercase;
+}

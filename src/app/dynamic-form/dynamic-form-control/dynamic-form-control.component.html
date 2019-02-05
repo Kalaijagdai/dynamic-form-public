@@ -1,0 +1,22 @@
+<div class="card mb-2">
+  <div class="card-header">Создать {{tempForm?.form_name}}</div>
+  <div class="card-body">
+    <app-dynamic-form-render [questions]="tempForm?.fieldData" #dynamicformrender (submitRender)="createReadyForm($event)"></app-dynamic-form-render>
+  </div>
+</div>
+<div *ngFor="let form of readyForms">
+  <div class="card mb-2">
+    <div class="card-header">{{form.applicationUser?.fio}}
+      <button type="button" class="close" aria-label="Close" (click)="deleteReadyForm(form)">
+        <span aria-hidden="true">&times;</span>
+      </button>
+    </div>
+    <div class="card-body">
+      <app-dynamic-form-render *ngIf="readyForms" [questions]="form.fieldData" (submitRender)="editReadyForm($event, form, dynFormRenderReady)" #dynFormRenderReady>
+      </app-dynamic-form-render>
+    </div>
+    <div class="card-footer text-right">
+      <span class="date-text">{{(form.creation_date | amFromUnix) | amDateFormat:'LL, HH:mm'}}</span>
+    </div>
+  </div>
+</div>

@@ -1,0 +1,190 @@
+<div class="row m-2">
+  <div class="col-2 pr-0">
+    <div class="flex-center mb-2 mr-2">
+      <button class="btn btn-success btn-lg btn-raised w-100" id="createForm" (click)="addDynForm()">
+        <i class="fa fa-plus"></i>
+        Создать форму
+      </button>
+    </div>
+    <div *ngFor="let form of dynFormData; let i = index" (click)="checkTab(i)" class="formname" [class.selected]="form.selected">
+      {{i+1}}. {{form.form_name}}
+    </div>
+  </div>
+  <div class="col-10 pl-0">
+    <div class="form-content" [ngClass]="{'new-form': isAddForm}">
+      <form [formGroup]="dynForm" (ngSubmit)="saveForm()">
+        <div>
+          <div class="row">
+            <div class="form-group col-3" [ngClass]="{'has-error': !dynForm.controls.form_name.valid}">
+              <label for="form_name" [ngClass]="{'required': !dynForm.controls.form_name.valid}">Название:</label>
+              <input type="text" class="form-control" id="form_name" placeholder="Название" formControlName="form_name">
+            </div>
+            <div class="form-group col-4" [ngClass]="{'has-error': !dynForm.controls.form_description.valid}">
+              <label for="form_description" [ngClass]="{'required': !dynForm.controls.form_description.valid}">Описание:</label>
+              <input type="text" class="form-control" id="form_description" placeholder="Описание" formControlName="form_description">
+            </div>
+            <div class="form-group col-3" [ngClass]="{'has-error': !dynForm.controls.form_icon.valid}">
+              <label for="form_icon" [ngClass]="{'required': !dynForm.controls.form_icon.valid}">Иконки толька от
+                fontawesome:</label>
+              <input type="text" class="form-control" id="form_icon" placeholder="название иконки" formControlName="form_icon">
+            </div>
+            <div class="form-group flex-center col-2">
+              <div class="checkbox btn" [ngClass]="{'btn-success': !dynForm.controls.form_hidden.value, 'btn-default': dynForm.controls.form_hidden.value}">
+                <label class="checkbox-inline custom-checkbox nowrap" for="form_hidden">
+                  <input type="checkbox" id="form_hidden" formControlName="form_hidden">
+                  <span>{{dynForm.controls.form_hidden.value ? 'Скрыть форму' : 'Показать форму'}}</span>
+                </label>
+              </div>
+            </div>
+          </div>
+          <div formArrayName="fieldData">
+            <div *ngFor="let field of dynForm['controls'].fieldData['controls']; let i = index">
+              <div [formGroupName]="i" class="field-group">
+                <div class="field-header">
+                  <div class="fieldsum"> <b>№: {{i + 1}} - {{(field['controls'].label.value == '') ? '...' :
+                      field['controls'].label.value}}</b></div>
+                  <div class="btn-group">
+                    <div class="checkbox flex-center btn" [ngClass]="{'btn-success': !field['controls'].hidden.value, 'btn-default': field['controls'].hidden.value}">
+                      <label class="checkbox-inline custom-checkbox nowrap" for="hidden">
+                        <input type="checkbox" id="hidden" formControlName="hidden">
+                        <span>{{field['controls'].hidden.value ? 'Скрыть поле' : 'Показать поле'}}</span>
+                      </label>
+                    </div>
+                    <button class="btn btn-danger btn-sm" type="button" (click)="deleteField(i)">
+                      Удалить поле
+                    </button>
+                  </div>
+                </div>
+                <div class="row">
+                  <div class="col-6">
+                    <div class="form-group" [ngClass]="{'has-error': !field.controls.label.valid}">
+                      <label [ngClass]="{'required': !field.controls.label.valid}" for="label">Название поле (label):</label>
+                      <input class="form-control form-control-sm" type="text" id="label" formControlName="label">
+                    </div>
+                    <div class="form-group" [ngClass]="{'has-error': !field.controls.key.valid || findDuplicate({name: field.controls.key.value, index: i})}">
+                      <label [ngClass]="{'required': !field.controls.key.valid}" for="key">Название ключа:</label>
+                      <input class="form-control form-control-sm" type="text" id="key" formControlName="key">
+                      <span class="error" *ngIf="findDuplicate({name: field.controls.key.value, index: i}) && i > 0">Название
+                        дублируется </span>
+                    </div>
+                    <div class="form-group" [ngClass]="{'has-error': !field.controls.order.valid}">
+                      <label [ngClass]="{'required': !field.controls.order.valid}" for="order">Порядок:</label>
+                      <input class="form-control form-control-sm" type="number" id="order" formControlName="order">
+                    </div>
+                    <div class="form-group" [ngClass]="{'has-error': !field.controls.controlType.valid}">
+                      <label [ngClass]="{'required': !field.controls.controlType.valid}" for="control_type">Выберите
+                        тип основого поля:</label>
+                      <select class="form-control form-control-sm" id="control_type" formControlName="controlType">
+                        <option *ngFor="let ctr of Controls" [ngValue]="ctr.key">
+                          {{ ctr.value }}
+                        </option>
+                      </select>
+                    </div>
+                    <div class="form-group" [ngClass]="{'has-error': !field.controls.type.valid}" *ngIf="getHiddenControl(field, 'controlType', 'hideType', 'dropdown')">
+                      <label [ngClass]="{'required': !field.controls.type.valid}" for="type">Тип поле input:</label>
+                      <select class="form-control form-control-sm" id="type" formControlName="type">
+                        <option *ngFor="let type of Types" [ngValue]="type.key">
+                          {{ type.value }}
+                        </option>
+                      </select>
+                    </div>
+                    <div class="form-group" formArrayName="options" *ngIf="!getHiddenControl(field, 'controlType', 'hideType', 'dropdown')">
+                      <div class="row  form-group" [formGroupName]="j" *ngFor="let option of field.controls.options.controls; let j = index">
+                        <div class="col-5" [ngClass]="{'has-error': !option.controls.key.valid}">
+                          <label [ngClass]="{'required': !option.controls.key.valid}" for="key">{{'data.field_name'}}</label>
+                          <input class="form-control form-control-sm" id="key" formControlName="key">
+                        </div>
+                        <div class="col-5" [ngClass]="{'has-error': !option.controls.value.valid}">
+                          <label [ngClass]="{'required': !option.controls.value.valid}" for="value">{{'data.field_value'}}</label>
+                          <input class="form-control form-control-sm" id="value" formControlName="value">
+                        </div>
+                        <div class="col-2 flex-center-bottom">
+                          <button class="btn btn-danger btn-sm" type="button" (click)="deleteOption(i, j)">
+                            Удалить option
+                          </button>
+                        </div>
+                      </div>
+                      <button class="btn btn-success btn-sm" type="button" (click)="addOption(i)">
+                        <i class="fa fa-plus"></i> Добавить option
+                      </button>
+                    </div>
+                  </div>
+                  <div class="col-6" formGroupName="validators">
+                    <fieldset class="scheduler-fieldset-valid">
+                      <legend class="scheduler-legend-valid">
+                        <p>Валидация</p>
+                      </legend>
+                      <div class="row">
+                        <div class="form-group col-6">
+                          <div class="checkbox">
+                            <label class="checkbox-inline custom-checkbox nowrap" for="required">
+                              <input type="checkbox" id="required" formControlName="required">
+                              <span>Обязательно заполнить</span>
+                            </label>
+                          </div>
+                        </div>
+                        <div class="form-group col-6"></div>
+                        <div class="form-group col-6" *ngIf="getHiddenControl(field, 'controlType', 'hideType', 'dropdown')">
+                          <label for="minlength">Минимум Символов:</label>
+                          <input class="form-control form-control-sm" id="minlength" formControlName="minlength">
+                        </div>
+                        <div class="form-group col-6" *ngIf="getHiddenControl(field, 'controlType', 'hideType', 'dropdown')">
+                          <label for="maxlength">Максимум Символов:</label>
+                          <input class="form-control form-control-sm" id="maxlength" formControlName="maxlength">
+                        </div>
+                        <div class="form-group col-6" *ngIf="getHiddenControl(field, 'controlType', 'hideType', 'dropdown')">
+                          <label for="pattern">Паттерн:</label>
+                          <input class="form-control form-control-sm" id="pattern" formControlName="pattern">
+                        </div>
+                        <div class="form-group col-6" *ngIf="getHiddenControl(field, 'controlType', 'hideType', 'dropdown')">
+                          <!-- <label for="accept">{{'data.field_accept'}}</label>
+                            <input class="form-control form-control-sm" id="accept" formControlName="accept"> -->
+                        </div>
+                        <div class="form-group col-6" *ngIf="getHiddenControl(field, 'controlType', 'hideType', 'dropdown')">
+                          <div class="checkbox" for="email">
+                            <label class="checkbox-inline custom-checkbox nowrap">
+                              <input type="checkbox" id="email" formControlName="email">
+                              <span>Email</span>
+                            </label>
+                          </div>
+                        </div>
+                        <div class="checkbox col-6" *ngIf="getHiddenControl(field, 'controlType', 'hideType', 'dropdown')">
+                          <label class="checkbox-inline custom-checkbox nowrap" for="password">
+                            <input type="checkbox" id="password" formControlName="password">
+                            <span>Repeat Password</span>
+                          </label>
+                        </div>
+                      </div>
+                    </fieldset>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div class="form-group col-12 p-3 text-right">
+              <button class="btn btn-primary" type="button" (click)="addField()">Добавить поле</button>
+            </div>
+            <div class="form-group col-12 p-3">
+              <div class="flex-space">
+                <button class="btn btn-danger btn-lg" type="button" [disabled]="isAddForm" (click)="deleteDynForm()">Удалить
+                  форму</button>
+                <button class="btn btn-info btn-lg" type="button" (click)="buttonNext()">Обновить Предварительный
+                  просмотр формы</button>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div>
+          <fieldset class="scheduler-fieldset">
+            <legend class="scheduler-legend">
+              <p>Предварительный просмотр формы</p>
+            </legend>
+            <app-dynamic-form-render *ngIf="isLeftVisible" [questions]="questions" [noSubmit]="false"></app-dynamic-form-render>
+          </fieldset>
+          <div class="flex-space">
+            <button class="btn btn-primary btn-lg" type="submit" [disabled]="!dynForm.valid">Сохранить</button>
+          </div>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>

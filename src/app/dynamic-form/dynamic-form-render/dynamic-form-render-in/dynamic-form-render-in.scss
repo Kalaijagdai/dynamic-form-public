@@ -1,0 +1,41 @@
+.form-control-feedback {
+  pointer-events: auto !important;
+  cursor: pointer;
+}
+
+.control-label {
+  font-size: 14px;
+  margin-bottom: 0;
+}
+
+.mycolor {
+  float: left;
+  margin-top: 5px;
+  margin-left: 5px;
+  width: auto;
+}
+
+.mycolorpicker {
+  position: fixed;
+  left: 92.8%;
+  top: 78%;
+}
+
+.myinput {
+  width: 100%;
+  border: 1px solid #cccccc;
+  border-top-left-radius: 5px;
+  border-bottom-left-radius: 5px;
+}
+
+.input-group-addon {
+  border-top-right-radius: 0.25rem;
+  border-bottom-right-radius: 0.25rem;
+  border: 1px solid #cccccc;
+}
+.displaynone {
+  display: none;
+}
+.form-group {
+  margin-bottom: .5em;
+}

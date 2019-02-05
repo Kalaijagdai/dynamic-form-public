@@ -1,0 +1,26 @@
+<div [formGroup]="form" class="form-group has-feedback" [ngClass]="{'has-error': !isValid, 'displaynone' : question.hidden}">
+  <label class="control-label" [attr.for]="question.key">{{question.label}}</label>
+  <div [ngSwitch]="question.controlType">
+    <input class="form-control form-control-sm" *ngSwitchCase="'textbox'" [formControlName]="question.key" [name]="question.key"
+      [accept]="question.validators.accept" [id]="question.key" [type]="question.type">
+    <select class="form-control form-control-sm" *ngSwitchCase="'dropdown'" [formControlName]="question.key" [name]="question.key"
+      [id]="question.key">
+      <option *ngFor="let opt of question.options" [selected]="opt.key === question.value" [value]="opt.key">{{opt.value}}</option>
+    </select>
+
+    <div class="checkbox" *ngSwitchCase="'checkbox'">
+      <label class="checkbox-inline custom-checkbox nowrap">
+        <input [formControlName]="question.key" [name]="question.key" [id]="question.key" (change)="onCheckChange($event, question)"
+          [checked]="question.value" [type]="question.type" />
+        <span></span>
+      </label>
+    </div>
+    <textarea *ngSwitchCase="'textarea'" class="form-control" [formControlName]="question.key" [name]="question.key"
+      [id]="question.key"></textarea>
+    <input class="form-control form-control-sm" *ngSwitchCase="'date'" [formControlName]="question.key" [name]="question.key"
+      [accept]="question.validators.accept" [id]="question.key" [type]="question.type">
+    <input *ngSwitchCase="'telephone'" class="form-control form-control-sm" [formControlName]="question.key"
+      [name]="question.key" [accept]="question.validators.accept" [id]="question.key" [type]="question.type">
+  </div>
+  <span *ngIf="!isValid" style="top: 10px;" class="fa fa-exclamation-circle form-control-feedback"></span>
+</div>
